@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
 
 #include <iostream>
-#include <unistd.h>
+//#include <unistd.h>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -29,7 +29,7 @@ int main(void){
         return 0;
     }
 
-    fout.open("basketball_player_conversion.obj", ios::out | ios::trunc);
+    fout.open("normal_vector.txt", ios::out | ios::trunc);
 
     while(getline(fin, buf)){
         for(auto &i : buf)  if(i == '/')    i = ' ';
@@ -44,9 +44,18 @@ int main(void){
             int temp;
             f.push_back(make_tuple(0, 0, 0));
             ss >> get<0>(f.back()) >> temp >> get<1>(f.back()) >> temp >> get<2>(f.back());
-            fout << get<0>(f.back()) << " " << get<1>(f.back()) << " " << get<2>(f.back()) << endl;
         }
         ss.clear();
+    }
+
+    for(auto i : f){
+        tuple<int, int, int> a = v[get<0>(i)], b = v[get<1>(i)], c = v[get<2>(i)];      //vertex a, b, c
+        int det[2][3] = {{get<0>(b) - get<0>(a), get<1>(b) - get<1>(a), get<2>(b) - get<2>(a)}, {get<0>(c) - get<0>(a), get<1>(c) - get<1>(a), get<2>(c) - get<2>(a)}};  //v[0] = b-a vector, v[1] = c-a vector
+        int x = det[0][1] * det[1][2] - det[0][2] * det[1][1], y = det[0][2] * det[1][0] - det[0][0] * det[1][2], z = det[0][0] * det[1][1] - det[0][1] * det[1][0];    //v[0] X v[1]
+             
+        float d = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+        //unit normal vector
+        fout << x / d << " " << y / d << " " << z / d << " " << endl;
     }
 
     fin.close();
